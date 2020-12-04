@@ -14,6 +14,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@antv/g2": "^4.1.1",
     "@tweenjs/tween.js": "^17.2.0",
     "jsoneditor": "^5.26.3",
     "jszip": "^3.1.5",
@@ -22,7 +23,6 @@
   },
   "devDependencies": {
     "@antv/data-set": "^0.10.1",
-    "@antv/g2": "^3.5.0",
     "@types/axios": "^0.14.0",
     "autoprefixer": "^7.1.2",
     "axios": "^0.18.0",

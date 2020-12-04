@@ -1,4 +1,4 @@
-import G2 from "@antv/g2";
+import { Chart } from "@antv/g2";
 
 // https://github.com/webrtc/samples/blob/gh-pages/src/content/capture/canvas-record/js/main.js
 const mediaSource = new MediaSource();
@@ -90,6 +90,13 @@ export default function renderVisComp(
   } else {
     console.error("Invalid vConfig (no data)");
   }
+  let posX, posY;
+  if (vConfig.hasOwnProperty("position")) {
+    posX = vConfig.position[0];
+    posY = vConfig.position[1];
+  } else {
+    console.error("Invalid vConfig (no position)");
+  }
   let w, h;
   if (vConfig.hasOwnProperty("size")) {
     w = vConfig.size[0];
@@ -122,42 +129,6 @@ export default function renderVisComp(
   } else {
     console.error("Invalid vConfig (no font size)");
   }
-  let backgroundFill;
-  if (vConfig.hasOwnProperty("background_fill")) {
-    backgroundFill = vConfig.background_fill;
-  } else {
-    console.error("Invalid vConfig (no background fill)");
-  }
-  let backgroundOpacity;
-  if (vConfig.hasOwnProperty("background_opacity")) {
-    backgroundOpacity = vConfig.background_opacity;
-  } else {
-    console.error("Invalid vConfig (no background opacity)");
-  }
-  let backgroundStroke;
-  if (vConfig.hasOwnProperty("background_stroke")) {
-    backgroundStroke = vConfig.background_stroke;
-  } else {
-    console.error("Invalid vConfig (no background stroke)");
-  }
-  let backgroundStrokeOpacity;
-  if (vConfig.hasOwnProperty("background_stroke_opacity")) {
-    backgroundStrokeOpacity = vConfig.background_stroke_opacity;
-  } else {
-    console.error("Invalid vConfig (no background stroke opacity)");
-  }
-  let backgroundLineWidth;
-  if (vConfig.hasOwnProperty("background_line_width")) {
-    backgroundLineWidth = vConfig.background_line_width;
-  } else {
-    console.error("Invalid vConfig (no background line width)");
-  }
-  let backgroundRadius;
-  if (vConfig.hasOwnProperty("background_radius")) {
-    backgroundRadius = vConfig.background_radius;
-  } else {
-    console.error("Invalid vConfig (no background radius)");
-  }
   let colorList;
   if (vConfig.hasOwnProperty("color")) {
     colorList = vConfig.color;
@@ -176,20 +147,14 @@ export default function renderVisComp(
   } else {
     console.error("Invalid vConfig (no data_name)");
   }
+  console.log("g2size", w, h);
   // Construct chart
-  const chart = new G2.Chart({
+  const chart = new Chart({
     container: elId,
+    autoFit: true,
     width: w,
-    height: h,
-    background: {
-      fill: backgroundFill,
-      fillOpacity: backgroundOpacity,
-      stroke: backgroundStroke,
-      strokeOpacity: backgroundStrokeOpacity,
-      lineWidth: backgroundLineWidth,
-      radius: backgroundRadius
-    }
-  }).legend(false);
+    height: h
+  });
   // Set up visualization config
   effectFunc(
     chart,
@@ -219,7 +184,7 @@ export default function renderVisComp(
     const computeFrame = () => {
       if (isBackgroundSrcExist) {
         ctx.drawImage(video, 0, 0);
-        ctx.drawImage(g2Canvas, vConfig.position[0], vConfig.position[1]);
+        ctx.drawImage(g2Canvas, posX, posY);
       } else {
         ctx.drawImage(g2Canvas, 0, 0);
       }
@@ -264,4 +229,61 @@ export default function renderVisComp(
     chart.render();
     onStart();
   });
+}
+
+function drawBackground(ctx, vConfig) {
+  let posX, posY;
+  if (vConfig.hasOwnProperty("position")) {
+    posX = vConfig.position[0];
+    posY = vConfig.position[1];
+  } else {
+    console.error("Invalid vConfig (no position)");
+  }
+  let w, h;
+  if (vConfig.hasOwnProperty("size")) {
+    w = vConfig.size[0];
+    h = vConfig.size[1];
+  } else {
+    console.error("Invalid vConfig (no size)");
+  }
+  let backgroundFill;
+  if (vConfig.hasOwnProperty("background_fill")) {
+    backgroundFill = vConfig.background_fill;
+  } else {
+    console.error("Invalid vConfig (no background fill)");
+  }
+  let backgroundOpacity;
+  if (vConfig.hasOwnProperty("background_opacity")) {
+    backgroundOpacity = vConfig.background_opacity;
+  } else {
+    console.error("Invalid vConfig (no background opacity)");
+  }
+  let backgroundStroke;
+  if (vConfig.hasOwnProperty("background_stroke")) {
+    backgroundStroke = vConfig.background_stroke;
+  } else {
+    console.error("Invalid vConfig (no background stroke)");
+  }
+  let backgroundStrokeOpacity;
+  if (vConfig.hasOwnProperty("background_stroke_opacity")) {
+    backgroundStrokeOpacity = vConfig.background_stroke_opacity;
+  } else {
+    console.error("Invalid vConfig (no background stroke opacity)");
+  }
+  let backgroundLineWidth;
+  if (vConfig.hasOwnProperty("background_line_width")) {
+    backgroundLineWidth = vConfig.background_line_width;
+  } else {
+    console.error("Invalid vConfig (no background line width)");
+  }
+  let backgroundRadius;
+  if (vConfig.hasOwnProperty("background_radius")) {
+    backgroundRadius = vConfig.background_radius;
+  } else {
+    console.error("Invalid vConfig (no background radius)");
+  }
+  ctx.rect(posX, posY, w, h);
+  ctx.fillStyle = "#000000";
+  ctx.globalAlpha = 0.1;
+  ctx.fill();
 }
