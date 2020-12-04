@@ -125,10 +125,16 @@ export default {
   top: -5000px;
   left: 0;
   background: white;
-  border-radius: 5px;
+  border-radius: 2px;
   box-shadow: 2px 2px 2px #888;
   margin: auto;
   align-self: center;
+}
+
+#preview {
+  box-shadow: 2px 2px 2px #888;
+  background: white;
+  border-radius: 2px;
 }
 
 video {

@@ -31,7 +31,7 @@
 
 ## TODO
 
-- [ ] UI - Extensible JSON console
+- [*] UI - Extensible JSON console
 - [*] UI - Invisible video recorder
 - [*] JSON - Editable JSON cfg
 - [ ] TEST - Unit

@@ -22,6 +22,7 @@ export default {
 <style>
 body {
   margin: 0;
+  background: #ddd;
 }
 
 #app {
@@ -32,7 +33,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background: #ccc;
 }
 
 #btn-play {

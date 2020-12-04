@@ -1,8 +1,13 @@
 <template>
-  <div id="editor"></div>
+  <div class="json-console-container">
+    <resize-box :move="resizeBoxMove" :max="resizeBoxMax" :min="resizeBoxMin">
+      <div id="editor"></div>
+    </resize-box>
+  </div>
 </template>
 
 <script>
+import ResizeBox from "./ResizeBox";
 import JSONEditor from "jsoneditor";
 import "jsoneditor/dist/jsoneditor.min.css";
 
@@ -13,7 +18,23 @@ export default {
 
   data() {
     return {
-      editor: null
+      editor: null,
+      resizeBoxMove: {
+        t: false,
+        l: false,
+        r: true,
+        b: false,
+        tl: false,
+        tr: false,
+        bl: false,
+        br: false
+      },
+      resizeBoxMax: {
+        width: 600
+      },
+      resizeBoxMin: {
+        width: 335
+      }
     };
   },
 
@@ -23,6 +44,10 @@ export default {
 
   methods: {
     ...mapActions(["updateRenderList"])
+  },
+
+  components: {
+    ResizeBox
   },
 
   mounted() {
@@ -44,8 +69,12 @@ export default {
 </script>
 
 <style scoped>
+.json-console-container {
+  position: relative;
+}
+
 #editor {
-  width: 35vw;
+  width: 100%;
   height: 100vh;
   background: white;
   box-shadow: 2px 2px 2px #888;
