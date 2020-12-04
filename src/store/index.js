@@ -39,34 +39,19 @@ const state = {
           }
         ],
         vis_type: "barHorizontalRound",
-        vis_cfg: [
-          "barHorizontalRound",
-          "barHorizontalRect",
-          "lineSmooth",
-          "barVerticalRect",
-          "dotHeight",
-          "barTriangle",
-          "barVerticalRound",
-          "donut",
-          "barDot",
-          "barRadial",
-          "pieFlower",
-          "dotSize",
-          "lineArea"
-        ],
-        start_time: 0,
-        duration: 4,
-        enter_duration: 2,
-        leave_duration: 2,
-        position: [520, 280],
-        size: [418.5, 237.60000000000002],
-        color_list: ["#e0b25a", "#ecd635", "#ffc766", "#eba15d", "#fbd920"],
+        vis_duration: 4,
+        vis_position_x: 10,
+        vis_position_y: 10,
+        vis_size_w: 400,
+        vis_size_h: 360,
+        vis_colors: ["#e0b25a"],
+        font_size: 16,
         font_color: "#ffffff",
         background_fill: "#703434",
         background_opacity: 0.4,
-        font_size: 27,
-        video_src: "/static/u3.mp4",
-        video_size: [960, 540]
+        background_src: "/static/sample.mp4", // support video or image background
+        background_size_w: 960, // only valid when background_src exist
+        background_size_h: 540
       }
     ],
     screenHeight: 540,

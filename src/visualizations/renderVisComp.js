@@ -81,19 +81,19 @@ export default function renderVisComp(
   fps = 30,
   format = "video/webm"
 ) {
-  // check vConfig
+  // Init recording environment
   initPaintingEnv();
+  // Get config parameters
   let data;
   if (vConfig.hasOwnProperty("data")) {
     data = vConfig.data;
   } else {
     console.error("Invalid vConfig (no data)");
   }
-  let size, w, h;
+  let w, h;
   if (vConfig.hasOwnProperty("size")) {
-    size = vConfig.size;
-    w = size[0];
-    h = size[1];
+    w = vConfig.size[0];
+    h = vConfig.size[1];
   } else {
     console.error("Invalid vConfig (no size)");
   }
@@ -116,15 +116,11 @@ export default function renderVisComp(
   } else {
     console.error("Invalid vConfig (no leave duration)");
   }
-  let baseFontSize, pt, pr, pb, pl;
+  let baseFontSize;
   if (vConfig.hasOwnProperty("font_size")) {
     baseFontSize = vConfig.font_size;
-    pt = baseFontSize * 1.5;
-    pr = baseFontSize * 0.5;
-    pb = baseFontSize * 0.5;
-    pl = baseFontSize * 0.5;
   } else {
-    console.error("Invalid vConfig (no base fontSize)");
+    console.error("Invalid vConfig (no font size)");
   }
   let backgroundFill;
   if (vConfig.hasOwnProperty("background_fill")) {
@@ -180,13 +176,11 @@ export default function renderVisComp(
   } else {
     console.error("Invalid vConfig (no data_name)");
   }
-
-  // construct chart
+  // Construct chart
   const chart = new G2.Chart({
     container: elId,
     width: w,
     height: h,
-    padding: [pt, pr, pb, pl],
     background: {
       fill: backgroundFill,
       fillOpacity: backgroundOpacity,
@@ -196,9 +190,7 @@ export default function renderVisComp(
       radius: backgroundRadius
     }
   }).legend(false);
-  w = vConfig.video_size[0];
-  h = vConfig.video_size[1];
-  // define vis effect
+  // Set up visualization config
   effectFunc(
     chart,
     data,
@@ -209,30 +201,38 @@ export default function renderVisComp(
     fontColor,
     titleText
   );
+  const isBackgroundSrcExist = vConfig.video_src !== null;
   const delayTime = enterDuration + duration + leaveDuration;
   const g2Canvas = document.querySelector(`canvas`);
-  const canvas = document.querySelector(`#preview`);
+  const canvas = document.querySelector(`#preview`); // preview canvas
   const video = document.querySelector(`video`);
-  video.load();
+  const ctx = canvas.getContext("2d");
+  if (isBackgroundSrcExist) {
+    video.load();
+    w = vConfig.video_size[0];
+    h = vConfig.video_size[1];
+  }
   g2Canvas.height = canvas.height = video.height = h;
   g2Canvas.width = canvas.width = video.width = w;
-  const ctx = canvas.getContext("2d");
   return new Promise(async (res, rej) => {
+    let isStopRecording = false;
     const computeFrame = () => {
-      ctx.drawImage(video, 0, 0);
-      ctx.drawImage(g2Canvas, vConfig.position[0], vConfig.position[1]);
+      if (isBackgroundSrcExist) {
+        ctx.drawImage(video, 0, 0);
+        ctx.drawImage(g2Canvas, vConfig.position[0], vConfig.position[1]);
+      } else {
+        ctx.drawImage(g2Canvas, 0, 0);
+      }
     };
     const timerCb = () => {
-      if (video.paused || video.ended) {
+      if (isStopRecording) {
         return;
       }
       computeFrame();
       setTimeout(timerCb, 0);
     };
-    // video.videoWidth
-    video.onplay = () => {
+    const onStart = () => {
       try {
-        // 30fps by default
         const stream = canvas.captureStream(fps);
         startRecording(stream);
         timerCb();
@@ -242,7 +242,7 @@ export default function renderVisComp(
     };
     const onEnd = () => {
       try {
-        video.pause();
+        isStopRecording = true;
         stopRecording();
         setTimeout(() => {
           console.log(`Record done!`);
@@ -253,12 +253,15 @@ export default function renderVisComp(
         rej(e);
       }
     };
-    // video.onended = onEnd
+    // End recording after duration
     setTimeout(() => {
       onEnd();
     }, delayTime);
-    // render
-    await video.play();
+    // Start recording
+    if (isBackgroundSrcExist) {
+      await video.play();
+    }
     chart.render();
+    onStart();
   });
 }

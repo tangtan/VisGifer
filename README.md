@@ -1,32 +1,49 @@
 # VisGifer
 
-> Making animated and expressive data visualizations (Powerer by G2).
+> Creating short-form videos and gifs for animated data visualizations.
 
-## VIS Library
+## Visualization
 
-```bash
- src/types/v_comps/barBoard.js                | 154 ++++++++++++++++++++++++++
- src/types/v_comps/barDivide.js               | 163 +++++++++++++++++++++++++++
- src/types/v_comps/barDot.js                  | 109 ++++++++++++++++++
- src/types/v_comps/barHorizontalRect.js       | 195 ++++++++++++++++++++++++++++++++
- src/types/v_comps/barHorizontalRound.js      | 134 ++++++++++++++++++++++
- src/types/v_comps/barLineDot.js              | 136 +++++++++++++++++++++++
- src/types/v_comps/barRadial.js               |  82 ++++++++++++++
- src/types/v_comps/barStar.js                 | 138 +++++++++++++++++++++++
- src/types/v_comps/barThumb.js                | 359 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- src/types/v_comps/barTriangle.js             | 177 +++++++++++++++++++++++++++++
- src/types/v_comps/barVerticalRect.js         | 159 ++++++++++++++++++++++++++
- src/types/v_comps/barVerticalRound.js        | 166 ++++++++++++++++++++++++++++
- src/types/v_comps/chocolateInterestWaffle.js |   2 +-
- src/types/v_comps/donut.js                   |  38 +++----
- src/types/v_comps/dotHeight.js               | 120 ++++++++++++++++++++
- src/types/v_comps/dotSize.js                 |  85 ++++++++++++++
- src/types/v_comps/lineArea.js                |  90 +++++++++++++++
- src/types/v_comps/lineSmooth.js              | 148 +++++++++++++++++++++++++
- src/types/v_comps/pieFlower.js               | 158 ++++++++++++++++++++++++++
- src/types/v_comps/progressBar.js             |   2 -
- src/types/v_comps/wordCloud.js               | 137 +++++++++++++++++++++++
- src/utils/util.js                            |   7 ++
+The visualization module is powered by [G2](https://g2.antv.vision/zh/examples/gallery).
+
+## Configuration
+
+```json
+{
+  "name": "Increases in Leaf Area (10^11 m2)",
+  "data": [
+    {
+      "name": "Croplands",
+      "value": 17.85
+    },
+    {
+      "name": "Forests",
+      "value": 16.72
+    },
+    {
+      "name": "Grasslands",
+      "value": 7.85
+    },
+    {
+      "name": "Others",
+      "value": 11.5
+    }
+  ],
+  "vis_type": "barHorizontalRound",
+  "vis_duration": 4,
+  "vis_position_x": 10,
+  "vis_position_y": 10,
+  "vis_size_w": 400,
+  "vis_size_h": 360,
+  "vis_colors": ["#e0b25a"],
+  "font_size": 16,
+  "font_color": "#ffffff",
+  "background_fill": "#703434",
+  "background_opacity": 0.4,
+  "background_src": "/static/sample.mp4", // support video or image background
+  "background_size_w": 960, // only valid when background_src exist
+  "background_size_h": 540
+}
 ```
 
 ## TODO
@@ -35,8 +52,10 @@
 - [*] UI - Invisible video recorder
 - [*] JSON - Editable JSON cfg
 - [ ] TEST - Unit
-- [ ] DOCs - README
+- [*] DOCs - README
 - [*] FEAT - Output format
+- [ ] FEAT - Multiple rendering
+- [ ] FEAT - Customize events sequence
 
 ## Build Setup
 
