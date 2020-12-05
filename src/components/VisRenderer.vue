@@ -45,7 +45,7 @@ export default {
       },
       vConfigList: [],
       isDownloadZIP: true,
-      outputFormat: "video/mp4"
+      outputFormat: "mp4"
     };
   },
 
@@ -78,11 +78,10 @@ export default {
       console.log(this.renderList);
       this.vConfigList = this.renderList.map(json => transformData(json));
       for (let [i, vConfig] of this.vConfigList.entries()) {
-        this.$refs.video.src = vConfig.video_src;
+        this.$refs.video.src = vConfig.videoSrc;
         const blobs = await this.playOnCanvas(vConfig);
         blobs.forEach((blob, j) => {
-          const postfix = this.outputFormat === "video/webm" ? "webm" : "mp4";
-          const filename = `${i}-${j}.${postfix}`;
+          const filename = `${i}-${j}.${this.outputFormat}`;
           zip.file(filename, blob, { binary: true });
         });
       }

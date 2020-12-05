@@ -30,10 +30,12 @@ export default {
         br: false
       },
       resizeBoxMax: {
-        width: 600
+        width: 600,
+        height: 0
       },
       resizeBoxMin: {
-        width: 335
+        width: 335,
+        height: 0
       }
     };
   },

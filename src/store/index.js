@@ -38,12 +38,12 @@ const state = {
             value: 11.5
           }
         ],
-        vis_type: "barHorizontalRound",
-        vis_duration: 4,
-        vis_position_x: 10,
-        vis_position_y: 10,
-        vis_size_w: 400,
-        vis_size_h: 360,
+        vis_type: "histogram",
+        vis_duration: 2,
+        vis_position_x: 100,
+        vis_position_y: 100,
+        vis_size_w: 300,
+        vis_size_h: 160,
         vis_colors: ["#e0b25a"],
         font_size: 16,
         font_color: "#ffffff",

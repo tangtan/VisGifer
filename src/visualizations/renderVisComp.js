@@ -67,9 +67,9 @@ const initPaintingEnv = () => {
 /**
  * 可视化动画渲染函数
  * @author yan1
- * @param {String} elId 画布容器
- * @param {Object} vConfig 可视化效果配置
- * @param {Function} effectFunc 可视化效果函数
+ * @param {String} elId Dom container
+ * @param {Object} vConfig Visualization config
+ * @param {Function} effectFunc Visualization function
  * @param {Number} fps fps
  * @param {String} format "video/webm" | "video/mp4"
  * @return 生成可视化动画图片序列
@@ -79,83 +79,32 @@ export default function renderVisComp(
   vConfig,
   effectFunc,
   fps = 30,
-  format = "video/webm"
+  format = "webm"
 ) {
   // Init recording environment
   initPaintingEnv();
   // Get config parameters
-  let data;
-  if (vConfig.hasOwnProperty("data")) {
-    data = vConfig.data;
-  } else {
-    console.error("Invalid vConfig (no data)");
-  }
-  let posX, posY;
-  if (vConfig.hasOwnProperty("position")) {
-    posX = vConfig.position[0];
-    posY = vConfig.position[1];
-  } else {
-    console.error("Invalid vConfig (no position)");
-  }
-  let w, h;
-  if (vConfig.hasOwnProperty("size")) {
-    w = vConfig.size[0];
-    h = vConfig.size[1];
-  } else {
-    console.error("Invalid vConfig (no size)");
-  }
-  // seconds to mileseconds
-  let enterDuration;
-  if (vConfig.hasOwnProperty("enter_duration")) {
-    enterDuration = 1000 * vConfig.enter_duration;
-  } else {
-    console.error("Invalid vConfig (no enter duration)");
-  }
-  let duration;
-  if (vConfig.hasOwnProperty("duration")) {
-    duration = 1000 * vConfig.duration;
-  } else {
-    console.error("Invalid vConfig (no duration)");
-  }
-  let leaveDuration;
-  if (vConfig.hasOwnProperty("leave_duration")) {
-    leaveDuration = 1000 * vConfig.leave_duration;
-  } else {
-    console.error("Invalid vConfig (no leave duration)");
-  }
-  let baseFontSize;
-  if (vConfig.hasOwnProperty("font_size")) {
-    baseFontSize = vConfig.font_size;
-  } else {
-    console.error("Invalid vConfig (no font size)");
-  }
-  let colorList;
-  if (vConfig.hasOwnProperty("color")) {
-    colorList = vConfig.color;
-  } else {
-    console.error("Invalid vConfig (no color)");
-  }
-  let fontColor;
-  if (vConfig.hasOwnProperty("font_color")) {
-    fontColor = vConfig.font_color;
-  } else {
-    console.error("Invalid vConfig (no font_color)");
-  }
-  let titleText;
-  if (vConfig.hasOwnProperty("data_name")) {
-    titleText = vConfig.data_name;
-  } else {
-    console.error("Invalid vConfig (no data_name)");
-  }
-  console.log("g2size", w, h);
+  const data = vConfig.data;
+  const [posX, posY] = vConfig.position;
+  const [visW, visH] = vConfig.size;
+  const [bgW, bgH] = vConfig.videoSize;
+  const enterDuration = 1000 * vConfig.enterDuration; // mileseconds
+  const duration = 1000 * vConfig.duration;
+  const leaveDuration = 1000 * vConfig.leaveDuration;
+  const baseFontSize = vConfig.fontSize;
+  const colorList = vConfig.colors;
+  const fontColor = vConfig.fontColor;
+  const titleText = vConfig.dataName;
+  const bgColor = vConfig.backgroundFill;
+  const bgOpacity = vConfig.backgroundOpacity;
   // Construct chart
   const chart = new Chart({
     container: elId,
     autoFit: true,
-    width: w,
-    height: h
+    width: visW,
+    height: visH
   });
-  // Set up visualization config
+  // Set up visualization
   effectFunc(
     chart,
     data,
@@ -166,7 +115,7 @@ export default function renderVisComp(
     fontColor,
     titleText
   );
-  const isBackgroundSrcExist = vConfig.video_src !== null;
+  const isBackgroundSrcExist = vConfig.videoSrc !== null;
   const delayTime = enterDuration + duration + leaveDuration;
   const g2Canvas = document.querySelector(`canvas`);
   const canvas = document.querySelector(`#preview`); // preview canvas
@@ -174,18 +123,22 @@ export default function renderVisComp(
   const ctx = canvas.getContext("2d");
   if (isBackgroundSrcExist) {
     video.load();
-    w = vConfig.video_size[0];
-    h = vConfig.video_size[1];
+    g2Canvas.height = canvas.height = video.height = bgH;
+    g2Canvas.width = canvas.width = video.width = bgW;
+  } else {
+    g2Canvas.height = canvas.height = video.height = visH;
+    g2Canvas.width = canvas.width = video.width = visW;
   }
-  g2Canvas.height = canvas.height = video.height = h;
-  g2Canvas.width = canvas.width = video.width = w;
+
   return new Promise(async (res, rej) => {
     let isStopRecording = false;
     const computeFrame = () => {
       if (isBackgroundSrcExist) {
         ctx.drawImage(video, 0, 0);
+        drawBackground(ctx, bgColor, bgOpacity, visW, visH, posX, posY);
         ctx.drawImage(g2Canvas, posX, posY);
       } else {
+        drawBackground(ctx, bgColor, bgOpacity, visW, visH);
         ctx.drawImage(g2Canvas, 0, 0);
       }
     };
@@ -211,7 +164,7 @@ export default function renderVisComp(
         stopRecording();
         setTimeout(() => {
           console.log(`Record done!`);
-          const blob = new Blob(recordedBlobs, { type: format });
+          const blob = new Blob(recordedBlobs, { type: `video/${format}` });
           res([blob]);
         }, 500);
       } catch (e) {
@@ -231,59 +184,23 @@ export default function renderVisComp(
   });
 }
 
-function drawBackground(ctx, vConfig) {
-  let posX, posY;
-  if (vConfig.hasOwnProperty("position")) {
-    posX = vConfig.position[0];
-    posY = vConfig.position[1];
-  } else {
-    console.error("Invalid vConfig (no position)");
-  }
-  let w, h;
-  if (vConfig.hasOwnProperty("size")) {
-    w = vConfig.size[0];
-    h = vConfig.size[1];
-  } else {
-    console.error("Invalid vConfig (no size)");
-  }
-  let backgroundFill;
-  if (vConfig.hasOwnProperty("background_fill")) {
-    backgroundFill = vConfig.background_fill;
-  } else {
-    console.error("Invalid vConfig (no background fill)");
-  }
-  let backgroundOpacity;
-  if (vConfig.hasOwnProperty("background_opacity")) {
-    backgroundOpacity = vConfig.background_opacity;
-  } else {
-    console.error("Invalid vConfig (no background opacity)");
-  }
-  let backgroundStroke;
-  if (vConfig.hasOwnProperty("background_stroke")) {
-    backgroundStroke = vConfig.background_stroke;
-  } else {
-    console.error("Invalid vConfig (no background stroke)");
-  }
-  let backgroundStrokeOpacity;
-  if (vConfig.hasOwnProperty("background_stroke_opacity")) {
-    backgroundStrokeOpacity = vConfig.background_stroke_opacity;
-  } else {
-    console.error("Invalid vConfig (no background stroke opacity)");
-  }
-  let backgroundLineWidth;
-  if (vConfig.hasOwnProperty("background_line_width")) {
-    backgroundLineWidth = vConfig.background_line_width;
-  } else {
-    console.error("Invalid vConfig (no background line width)");
-  }
-  let backgroundRadius;
-  if (vConfig.hasOwnProperty("background_radius")) {
-    backgroundRadius = vConfig.background_radius;
-  } else {
-    console.error("Invalid vConfig (no background radius)");
-  }
-  ctx.rect(posX, posY, w, h);
-  ctx.fillStyle = "#000000";
-  ctx.globalAlpha = 0.1;
+function drawBackground(ctx, bgColor, bgOpacity, w, h, x = 0, y = 0) {
+  ctx.rect(x, y, w, h);
+  ctx.fillStyle = hexToRgba(bgColor, bgOpacity);
   ctx.fill();
+}
+
+//hex -> rgba
+function hexToRgba(hex, opacity) {
+  return (
+    "rgba(" +
+    parseInt("0x" + hex.slice(1, 3)) +
+    "," +
+    parseInt("0x" + hex.slice(3, 5)) +
+    "," +
+    parseInt("0x" + hex.slice(5, 7)) +
+    "," +
+    opacity +
+    ")"
+  );
 }
