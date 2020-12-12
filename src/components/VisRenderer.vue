@@ -27,7 +27,6 @@
 
 <script>
 import renderVisComp from "../visualizations/renderVisComp";
-import visTypeParser from "../visualizations/visTypeParser";
 import { saveFile, uploadFile } from "../utils/fileIO";
 import { transformData } from "../utils/protoc";
 
@@ -95,12 +94,10 @@ export default {
 
     playOnCanvas: async function(vConfig) {
       this.clearG2Container();
-      const visType = visTypeParser(vConfig);
       const FPS = this.configData.fps;
       return await renderVisComp(
         "g2-container",
         vConfig,
-        visType,
         FPS,
         this.outputFormat
       );

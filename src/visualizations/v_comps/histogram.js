@@ -1,39 +1,27 @@
-import VisualizationBase from "../visBase";
+import VisCompBase from "../visCompBase";
 
-export default class Histogram extends VisualizationBase {
-  constructor() {
-    super();
+export default class Histogram extends VisCompBase {
+  constructor(chart) {
+    super(chart);
     this.name = "Histogram";
   }
 
-  static visualization(
-    chart,
-    data,
-    enterDuration,
-    leaveDuration,
-    baseFontSize,
-    colorList,
-    fontColor,
-    titleText
-  ) {
+  create(vConfig) {
+    const data = vConfig.data;
+    const enterDuration = 1000 * vConfig.enterDuration; // mileseconds
+    const leaveDuration = 1000 * vConfig.leaveDuration;
+    const baseFontSize = vConfig.fontSize;
+    const colorList = vConfig.colors;
+    const fontColor = vConfig.fontColor;
+    const titleText = vConfig.dataName;
+    const chart = this.chart;
     const transformedData = data.map(dataItem => {
-      return {
-        name: dataItem.name,
-        value: Number(dataItem.value)
-      };
+      return { name: dataItem.name, value: Number(dataItem.value) };
     });
     chart.data(transformedData);
-    chart.axis("name", {
-      title: null,
-      tickLine: null,
-      line: null
-    });
+    chart.axis("name", { title: null, tickLine: null, line: null });
 
-    chart.axis("value", {
-      label: null,
-      title: null,
-      grid: null
-    });
+    chart.axis("value", { label: null, title: null, grid: null });
     chart.legend(false);
     chart.annotation().text({
       content: titleText,

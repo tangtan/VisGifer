@@ -1,4 +1,5 @@
 import { Chart } from "@antv/g2";
+import visCompFactorySelector from "./visCompFactory";
 
 // https://github.com/webrtc/samples/blob/gh-pages/src/content/capture/canvas-record/js/main.js
 const mediaSource = new MediaSource();
@@ -6,6 +7,9 @@ mediaSource.addEventListener("sourceopen", handleSourceOpen, false);
 let mediaRecorder;
 let recordedBlobs;
 let sourceBuffer;
+let g2Canvas; // g2 renderer
+let canvas; // preview renderer
+let video; // background media renderer
 
 const recordMimeType = "video/webm;codecs=vp9";
 
@@ -61,15 +65,51 @@ function stopRecording() {
   console.log("Recorded Blobs: ", recordedBlobs);
 }
 
-const initPaintingEnv = () => {
+const initVisComp = (elId, vConfig) => {
+  const [visW, visH] = vConfig.size;
+  const bgColor = vConfig.backgroundFill;
+  const bgOpacity = vConfig.backgroundOpacity;
+  // Create G2 chart
+  const chart = new Chart({
+    container: elId,
+    autoFit: true,
+    width: visW,
+    height: visH
+  });
+  // Set up G2 chart
+  chart.theme({
+    styleSheet: {
+      backgroundColor: hexToRgba(bgColor, bgOpacity)
+    }
+  });
+  return chart;
+};
+
+const initPaintingEnv = vConfig => {
+  // Clearn recording buffer
   recordedBlobs = [];
+  // Set up renderers
+  g2Canvas = document.querySelector(`canvas`);
+  canvas = document.querySelector(`#preview`); // preview canvas
+  video = document.querySelector(`video`);
+  if (vConfig.videoSrc !== null) {
+    const [bgW, bgH] = vConfig.videoSize;
+    video.load();
+    g2Canvas.height = canvas.height = video.height = bgH;
+    g2Canvas.width = canvas.width = video.width = bgW;
+  } else {
+    const [visW, visH] = vConfig.size;
+    g2Canvas.height = canvas.height = video.height = visH;
+    g2Canvas.width = canvas.width = video.width = visW;
+  }
+  // Return preview canvas context
+  return canvas.getContext("2d");
 };
 /**
  * 可视化动画渲染函数
  * @author yan1
  * @param {String} elId Dom container
  * @param {Object} vConfig Visualization config
- * @param {Function} effectFunc Visualization function
  * @param {Number} fps fps
  * @param {String} format "video/webm" | "video/mp4"
  * @return 生成可视化动画图片序列
@@ -77,68 +117,27 @@ const initPaintingEnv = () => {
 export default function renderVisComp(
   elId,
   vConfig,
-  effectFunc,
   fps = 30,
   format = "webm"
 ) {
+  // Init visualization component
+  const chart = initVisComp(elId, vConfig);
+  // Configure visualization component
+  const VisCompFactory = visCompFactorySelector(vConfig);
+  const visComp = new VisCompFactory(chart);
+  visComp.create(vConfig);
   // Init recording environment
-  initPaintingEnv();
-  // Get config parameters
-  const data = vConfig.data;
-  const [posX, posY] = vConfig.position;
-  const [visW, visH] = vConfig.size;
-  const [bgW, bgH] = vConfig.videoSize;
-  const enterDuration = 1000 * vConfig.enterDuration; // mileseconds
-  const duration = 1000 * vConfig.duration;
-  const leaveDuration = 1000 * vConfig.leaveDuration;
-  const baseFontSize = vConfig.fontSize;
-  const colorList = vConfig.colors;
-  const fontColor = vConfig.fontColor;
-  const titleText = vConfig.dataName;
-  const bgColor = vConfig.backgroundFill;
-  const bgOpacity = vConfig.backgroundOpacity;
-  // Construct chart
-  const chart = new Chart({
-    container: elId,
-    autoFit: true,
-    width: visW,
-    height: visH
-  });
-  // Set up visualization
-  effectFunc(
-    chart,
-    data,
-    enterDuration,
-    leaveDuration,
-    baseFontSize,
-    colorList,
-    fontColor,
-    titleText
-  );
-  const isBackgroundSrcExist = vConfig.videoSrc !== null;
-  const delayTime = enterDuration + duration + leaveDuration;
-  const g2Canvas = document.querySelector(`canvas`);
-  const canvas = document.querySelector(`#preview`); // preview canvas
-  const video = document.querySelector(`video`);
-  const ctx = canvas.getContext("2d");
-  if (isBackgroundSrcExist) {
-    video.load();
-    g2Canvas.height = canvas.height = video.height = bgH;
-    g2Canvas.width = canvas.width = video.width = bgW;
-  } else {
-    g2Canvas.height = canvas.height = video.height = visH;
-    g2Canvas.width = canvas.width = video.width = visW;
-  }
-
+  const ctx = initPaintingEnv(vConfig);
+  // Render visualization component
   return new Promise(async (res, rej) => {
+    const isBackgroundSrcExist = vConfig.videoSrc !== null;
     let isStopRecording = false;
     const computeFrame = () => {
       if (isBackgroundSrcExist) {
+        const [posX, posY] = vConfig.position;
         ctx.drawImage(video, 0, 0);
-        drawBackground(ctx, bgColor, bgOpacity, visW, visH, posX, posY);
         ctx.drawImage(g2Canvas, posX, posY);
       } else {
-        drawBackground(ctx, bgColor, bgOpacity, visW, visH);
         ctx.drawImage(g2Canvas, 0, 0);
       }
     };
@@ -172,6 +171,10 @@ export default function renderVisComp(
       }
     };
     // End recording after duration
+    const enterDuration = 1000 * vConfig.enterDuration; // mileseconds
+    const duration = 1000 * vConfig.duration;
+    const leaveDuration = 1000 * vConfig.leaveDuration;
+    const delayTime = enterDuration + duration + leaveDuration;
     setTimeout(() => {
       onEnd();
     }, delayTime);
@@ -179,15 +182,9 @@ export default function renderVisComp(
     if (isBackgroundSrcExist) {
       await video.play();
     }
-    chart.render();
+    visComp.render();
     onStart();
   });
-}
-
-function drawBackground(ctx, bgColor, bgOpacity, w, h, x = 0, y = 0) {
-  ctx.rect(x, y, w, h);
-  ctx.fillStyle = hexToRgba(bgColor, bgOpacity);
-  ctx.fill();
 }
 
 //hex -> rgba

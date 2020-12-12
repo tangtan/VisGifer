@@ -1,10 +1,10 @@
 import Histogram from "./v_comps/histogram";
 
-export default function visTypeParser(vConfig) {
+export default function visCompFactorySelector(vConfig) {
   switch (vConfig.visualization) {
     case Histogram.name:
-      return Histogram.visualization;
+      return Histogram;
     default:
-      return Histogram.visualization;
+      return Histogram;
   }
 }
