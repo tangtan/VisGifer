@@ -38,18 +38,18 @@ const state = {
             value: 11.5
           }
         ],
-        vis_type: "histogram",
+        vis_type: "ShapeShiftingHistogram",
         vis_duration: 2,
         vis_position_x: 100,
         vis_position_y: 100,
-        vis_size_w: 300,
-        vis_size_h: 160,
+        vis_size_w: 1200,
+        vis_size_h: 600,
         vis_colors: ["#e0b25a"],
         font_size: 16,
         font_color: "#ffffff",
         background_fill: "#703434",
         background_opacity: 0.4,
-        background_src: "/static/sample.mp4", // support video or image background
+        background_src: null, // support video or image background
         background_size_w: 960, // only valid when background_src exist
         background_size_h: 540
       }
