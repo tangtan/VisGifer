@@ -54,6 +54,7 @@ export default class ShapeShiftingHistogram extends VisCompBase {
     //   width: 1200,
     //   syncViewPadding: true
     // });
+    chart.syncViewPadding = true;
 
     // #fff1e0
     chart.theme({
