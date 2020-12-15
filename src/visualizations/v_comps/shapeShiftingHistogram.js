@@ -5,20 +5,20 @@ const data = [
   [
     { income: [10, 20], num: 5 },
     { income: [20, 30], num: 7 },
-    { income: [30, 40], num: 6 }
+    { income: [30, 40], num: 6 },
   ],
   [
     { income: [10, 20], num: 2 },
     { income: [20, 30], num: 8 },
     { income: [30, 40], num: 6.5 },
-    { income: [40, 50], num: 0.5 }
+    { income: [40, 50], num: 0.5 },
   ],
   [
     { income: [10, 20], num: 1 },
     { income: [20, 30], num: 7.5 },
     { income: [30, 40], num: 5.5 },
-    { income: [40, 50], num: 3 }
-  ]
+    { income: [40, 50], num: 3 },
+  ],
 ];
 const data2 = [
   { income: 15, num: 5 },
@@ -30,12 +30,12 @@ const data2 = [
   { income: 125, num: 3.5 },
   { income: 145, num: 1.8 },
   { income: 165, num: 1 },
-  { income: 185, num: 0.2 }
+  { income: 185, num: 0.2 },
 ];
 const data3 = [
   [{ income: [20, 60], num: 8 }],
   [{ income: [30, 80], num: 8 }],
-  [{ income: [35, 90], num: 8 }]
+  [{ income: [35, 90], num: 8 }],
 ];
 const dataText = [1998, 1999, 2000];
 
@@ -47,20 +47,12 @@ export default class ShapeShiftingHistogram extends VisCompBase {
 
   create(vConfig) {
     const chart = this.chart;
-    // const chart = new G2.Chart({
-    //   container: "container",
-    //   autoFit: false,
-    //   height: 600,
-    //   width: 1200,
-    //   syncViewPadding: true
-    // });
     chart.syncViewPadding = true;
 
-    // #fff1e0
     chart.theme({
       styleSheet: {
-        backgroundColor: "rgba(100,10,100,0.1)"
-      }
+        backgroundColor: "#fff1e0",
+      },
     });
 
     chart.scale("income", {
@@ -68,13 +60,14 @@ export default class ShapeShiftingHistogram extends VisCompBase {
       max: 200,
       tickCount: 5,
       range: [0.05, 0.95],
-      sync: true
+      sync: true,
     });
+
     chart.scale("num", {
       min: 0,
       max: 8,
       tickCount: 5,
-      sync: true
+      sync: true,
     });
 
     chart.axis("income", {
@@ -83,41 +76,42 @@ export default class ShapeShiftingHistogram extends VisCompBase {
         length: 10,
         style: {
           lineWidth: 3,
-          lineCap: "round"
-        }
+          lineCap: "round",
+        },
         //can't offset 'tickLine' -no api
       },
       label: {
         style: {
           fontSize: 24,
-          fontWeight: "bold"
+          fontWeight: "bold",
         },
         offset: 13,
-        formatter: val => `$${val}K`
-      }
+        formatter: (val) => `$${val}K`,
+      },
     });
+
     chart.axis("num", {
       position: "right",
       label: {
         style: {
           fontSize: 24,
           fontWeight: "bold",
-          fill: "#19100e"
-        }
+          fill: "#19100e",
+        },
       },
       grid: {
         line: {
           type: "line",
           style: {
             lineWidth: 3,
-            lineDash: [3]
-          }
-        }
-      }
+            lineDash: [3],
+          },
+        },
+      },
     });
 
     chart.tooltip({
-      showMarkers: false
+      showMarkers: false,
     });
   }
 
@@ -141,8 +135,8 @@ export default class ShapeShiftingHistogram extends VisCompBase {
             appear: null,
             update: {
               duration: 600,
-              easing: "easeLinear"
-            }
+              easing: "easeLinear",
+            },
           });
         view1.annotation().text({
           position: ["5%", "13%"],
@@ -151,9 +145,9 @@ export default class ShapeShiftingHistogram extends VisCompBase {
             fontSize: 48,
             fontWeight: "bold",
             fill: "#a35f78",
-            textAlign: "center"
+            textAlign: "center",
           },
-          animate: false
+          animate: false,
         });
 
         view2.data(data2);
@@ -166,8 +160,8 @@ export default class ShapeShiftingHistogram extends VisCompBase {
             appear: {
               duration: 1000,
               delay: 1000,
-              easing: "easeQuadIn"
-            }
+              easing: "easeQuadIn",
+            },
           });
 
         view2.annotation().dataMarker({
@@ -179,24 +173,24 @@ export default class ShapeShiftingHistogram extends VisCompBase {
               fontWeight: "bold",
               fill: "#536b90",
               textAlign: "center",
-              opacity: 1
+              opacity: 1,
             },
             background: {
               padding: 5,
               style: {
                 stroke: "#536b90",
                 lineWidth: 5,
-                lineJoin: "round"
-              }
-            }
+                lineJoin: "round",
+              },
+            },
           },
           position: ["80%", "88%"],
           line: {
             length: 50,
             style: {
               stroke: "#536b90",
-              lineWidth: 5
-            }
+              lineWidth: 5,
+            },
           },
           animate: true,
           animateOption: {
@@ -204,9 +198,9 @@ export default class ShapeShiftingHistogram extends VisCompBase {
               animation: "fade-in",
               easing: "easeQuadIn",
               delay: 2000,
-              duration: 500
-            }
-          }
+              duration: 500,
+            },
+          },
         });
 
         view3.data(data3[count]);
@@ -220,8 +214,8 @@ export default class ShapeShiftingHistogram extends VisCompBase {
               animation: "fade-in",
               easing: "easeQuadIn",
               delay: 500,
-              duration: 500
-            }
+              duration: 500,
+            },
             // update: {
             //     // animation: 'scale-in-x',
             //     duration: 600,
@@ -240,9 +234,9 @@ export default class ShapeShiftingHistogram extends VisCompBase {
             fontSize: 48,
             fontWeight: "bold",
             fill: "#a35f78",
-            textAlign: "center"
+            textAlign: "center",
           },
-          animate: false
+          animate: false,
         });
         // failed => redraw
         // view3.data(data3[count]);

@@ -15,7 +15,7 @@ const state = {
     launchOptions: {
       width: 1280,
       height: 720,
-      headless: false
+      headless: false,
     },
     renderJson: [
       {
@@ -23,23 +23,23 @@ const state = {
         data: [
           {
             name: "Croplands",
-            value: 17.85
+            value: 17.85,
           },
           {
             name: "Forests",
-            value: 16.72
+            value: 16.72,
           },
           {
             name: "Grasslands",
-            value: 7.85
+            value: 7.85,
           },
           {
             name: "Others",
-            value: 11.5
-          }
+            value: 11.5,
+          },
         ],
         vis_type: "ShapeShiftingHistogram",
-        vis_duration: 2,
+        vis_duration: 10,
         vis_position_x: 100,
         vis_position_y: 100,
         vis_size_w: 1200,
@@ -51,18 +51,18 @@ const state = {
         background_opacity: 0.4,
         background_src: null, // support video or image background
         background_size_w: 960, // only valid when background_src exist
-        background_size_h: 540
-      }
+        background_size_h: 540,
+      },
     ],
     screenHeight: 540,
-    screenWidth: 960
-  }
+    screenWidth: 960,
+  },
 };
 
 const getters = {
-  configData: state => state.configData,
-  renderList: state => state.configData.renderJson,
-  jsonEditor: state => state.jsonEditor
+  configData: (state) => state.configData,
+  renderList: (state) => state.configData.renderJson,
+  jsonEditor: (state) => state.jsonEditor,
 };
 
 const actions = {
@@ -77,11 +77,11 @@ const actions = {
   setJsonEditor({ state }) {
     console.log(state.configData.renderJson[0]);
     state.jsonEditor.set(state.configData.renderJson[0]);
-  }
+  },
 };
 
 export default new Vuex.Store({
   state,
   getters,
-  actions
+  actions,
 });

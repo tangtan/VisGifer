@@ -40,28 +40,28 @@ export default {
   data() {
     return {
       btnPlayStyle: {
-        "box-shadow": "2px 2px 2px #888"
+        "box-shadow": "2px 2px 2px #888",
       },
       vConfigList: [],
-      isDownloadZIP: true,
-      outputFormat: "mp4"
+      isDownloadZIP: false,
+      outputFormat: "mp4",
     };
   },
 
   computed: {
-    ...mapGetters(["renderList", "configData"])
+    ...mapGetters(["renderList", "configData"]),
   },
 
   methods: {
-    changeBtnStyle: function() {
+    changeBtnStyle: function () {
       this.btnPlayStyle = { "box-shadow": "none" };
     },
 
-    restoreBtnStyle: function() {
+    restoreBtnStyle: function () {
       this.btnPlayStyle = { "box-shadow": "2px 2px 2px #888" };
     },
 
-    clearG2Container: function() {
+    clearG2Container: function () {
       const containerDOM = document.getElementById("g2-container");
       if (containerDOM) {
         const children = containerDOM.childNodes;
@@ -71,11 +71,11 @@ export default {
       }
     },
 
-    startRendering: async function() {
+    startRendering: async function () {
       this.restoreBtnStyle();
       const zip = new JSZip();
       console.log(this.renderList);
-      this.vConfigList = this.renderList.map(json => transformData(json));
+      this.vConfigList = this.renderList.map((json) => transformData(json));
       for (let [i, vConfig] of this.vConfigList.entries()) {
         this.$refs.video.src = vConfig.videoSrc;
         const blobs = await this.playOnCanvas(vConfig);
@@ -92,7 +92,7 @@ export default {
       }
     },
 
-    playOnCanvas: async function(vConfig) {
+    playOnCanvas: async function (vConfig) {
       this.clearG2Container();
       const FPS = this.configData.fps;
       return await renderVisComp(
@@ -101,8 +101,8 @@ export default {
         FPS,
         this.outputFormat
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
