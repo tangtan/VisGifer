@@ -1,43 +1,56 @@
 import VisCompBase from "../visCompBase";
 
-//data and data2 => test
-const data = [
+//intervalData + maskData + lineData
+const originData = [
   [
-    { income: [10, 20], num: 5 },
-    { income: [20, 30], num: 7 },
-    { income: [30, 40], num: 6 },
+    {
+      income: [10, 20],
+      num: 5,
+      year: 1998,
+      income2: [20, 40],
+      num2: 8,
+      income3: 15,
+      num3: 5,
+    },
+    { income: [20, 30], num: 7, year: 1998, income3: 25, num3: 7 },
+    { income: [30, 40], num: 6, year: 1998, income3: 35, num3: 6 },
+    { income: [40, 50], num: 5, year: 1998, income3: 45, num3: 5 },
+    { income: [50, 60], num: 2, year: 1998, income3: 55, num3: 2 },
   ],
   [
-    { income: [10, 20], num: 2 },
-    { income: [20, 30], num: 8 },
-    { income: [30, 40], num: 6.5 },
-    { income: [40, 50], num: 0.5 },
+    {
+      income: [10, 20],
+      num: 4,
+      year: 1999,
+      income2: [20, 50],
+      num2: 8,
+      income3: 15,
+      num3: 5,
+    },
+    { income: [20, 30], num: 5, year: 1999, income3: 25, num3: 7 },
+    { income: [30, 40], num: 5, year: 1999, income3: 35, num3: 6 },
+    { income: [40, 50], num: 6, year: 1999, income3: 45, num3: 5 },
+    { income: [50, 60], num: 4, year: 1999, income3: 55, num3: 2 },
+    { income: [60, 70], num: 1, year: 1999 },
   ],
   [
-    { income: [10, 20], num: 1 },
-    { income: [20, 30], num: 7.5 },
-    { income: [30, 40], num: 5.5 },
-    { income: [40, 50], num: 3 },
+    {
+      income: [10, 20],
+      num: 2,
+      year: 2000,
+      income2: [30, 70],
+      num2: 8,
+      income3: 15,
+      num3: 5,
+    },
+    { income: [20, 30], num: 3, year: 2000, income3: 25, num3: 7 },
+    { income: [30, 40], num: 4, year: 2000, income3: 35, num3: 6 },
+    { income: [40, 50], num: 4, year: 2000, income3: 45, num3: 5 },
+    { income: [50, 60], num: 4, year: 2000, income3: 55, num3: 2 },
+    { income: [60, 70], num: 4, year: 2000 },
+    { income: [70, 80], num: 3, year: 2000 },
   ],
 ];
-const data2 = [
-  { income: 15, num: 5 },
-  { income: 25, num: 7 },
-  { income: 35, num: 6 },
-  { income: 65, num: 3 },
-  { income: 85, num: 4 },
-  { income: 105, num: 2 },
-  { income: 125, num: 3.5 },
-  { income: 145, num: 1.8 },
-  { income: 165, num: 1 },
-  { income: 185, num: 0.2 },
-];
-const data3 = [
-  [{ income: [20, 60], num: 8 }],
-  [{ income: [30, 80], num: 8 }],
-  [{ income: [35, 90], num: 8 }],
-];
-const dataText = [1998, 1999, 2000];
 
 export default class ShapeShiftingHistogram extends VisCompBase {
   constructor(chart) {
@@ -47,8 +60,7 @@ export default class ShapeShiftingHistogram extends VisCompBase {
 
   create(vConfig) {
     const chart = this.chart;
-    chart.syncViewPadding = true;
-
+    chart.syncViewPadding = true; //数据更新后就失效了 => why
     chart.theme({
       styleSheet: {
         backgroundColor: "#fff1e0",
@@ -62,7 +74,6 @@ export default class ShapeShiftingHistogram extends VisCompBase {
       range: [0.05, 0.95],
       sync: true,
     });
-
     chart.scale("num", {
       min: 0,
       max: 8,
@@ -70,6 +81,7 @@ export default class ShapeShiftingHistogram extends VisCompBase {
       sync: true,
     });
 
+    //'income'*'num'
     chart.axis("income", {
       line: null,
       tickLine: {
@@ -78,7 +90,6 @@ export default class ShapeShiftingHistogram extends VisCompBase {
           lineWidth: 3,
           lineCap: "round",
         },
-        //can't offset 'tickLine' -no api
       },
       label: {
         style: {
@@ -89,8 +100,108 @@ export default class ShapeShiftingHistogram extends VisCompBase {
         formatter: (val) => `$${val}K`,
       },
     });
-
     chart.axis("num", {
+      position: "right",
+      label: {
+        style: {
+          fontSize: 24,
+          fontWeight: "bold",
+          fill: "#19100e",
+        },
+      },
+      grid: {
+        line: {
+          type: "line",
+          style: {
+            lineWidth: 3,
+            lineDash: [3],
+          },
+        },
+      },
+    });
+
+    //'income2'*'num2'
+    chart.scale("income2", {
+      min: 0,
+      max: 200,
+      tickCount: 5,
+      range: [0.05, 0.95],
+    });
+    chart.scale("num2", {
+      min: 0,
+      max: 8,
+      tickCount: 5,
+      key: true,
+    });
+    chart.axis("income2", {
+      line: null,
+      tickLine: {
+        length: 10,
+        style: {
+          lineWidth: 3,
+          lineCap: "round",
+        },
+      },
+      label: {
+        style: {
+          fontSize: 24,
+          fontWeight: "bold",
+        },
+        offset: 13,
+        formatter: (val) => `$${val}K`,
+      },
+    });
+    chart.axis("num2", {
+      position: "right",
+      label: {
+        style: {
+          fontSize: 24,
+          fontWeight: "bold",
+          fill: "#19100e",
+        },
+      },
+      grid: {
+        line: {
+          type: "line",
+          style: {
+            lineWidth: 3,
+            lineDash: [3],
+          },
+        },
+      },
+    });
+
+    //'income3'*'num3'
+    chart.scale("income3", {
+      min: 0,
+      max: 200,
+      tickCount: 5,
+      range: [0.05, 0.95],
+    });
+    chart.scale("num3", {
+      min: 0,
+      max: 8,
+      tickCount: 5,
+    });
+    chart.axis("income3", {
+      line: null,
+      tickLine: {
+        length: 10,
+        style: {
+          lineWidth: 3,
+          lineCap: "round",
+        },
+      },
+      label: {
+        style: {
+          fontSize: 24,
+          fontWeight: "bold",
+        },
+        offset: 13,
+        formatter: (val) => `$${val}K`,
+      },
+    });
+    chart.axis("num3", {
       position: "right",
       label: {
         style: {
@@ -117,16 +228,16 @@ export default class ShapeShiftingHistogram extends VisCompBase {
 
   render() {
     const chart = this.chart;
-    const view1 = chart.createView({ padding: [100, 50, 100, 10] });
-    const view2 = chart.createView();
-    const view3 = chart.createView();
     let count = 0;
+    chart.data(originData[count]);
+    const intervalView = chart.createView({ padding: [100, 50, 100, 10] });
+    const lineView = chart.createView({ padding: [100, 50, 100, 10] });
+    const maskView = chart.createView({ padding: [100, 50, 100, 10] });
     let timeOut;
     function runGif() {
       if (count == 0) {
-        view1.data(data[count]);
-        view1.interaction("active-region");
-        view1
+        intervalView.interaction("active-region");
+        intervalView
           .interval()
           .position("income*num")
           .color("#c58e9d")
@@ -138,9 +249,9 @@ export default class ShapeShiftingHistogram extends VisCompBase {
               easing: "easeLinear",
             },
           });
-        view1.annotation().text({
+        intervalView.annotation().text({
           position: ["5%", "13%"],
-          content: dataText[count],
+          content: originData[count][0].year,
           style: {
             fontSize: 48,
             fontWeight: "bold",
@@ -150,11 +261,10 @@ export default class ShapeShiftingHistogram extends VisCompBase {
           animate: false,
         });
 
-        view2.data(data2);
-        view2.tooltip(false);
-        view2
+        lineView.tooltip(false);
+        lineView
           .line()
-          .position("income*num")
+          .position("income3*num3")
           .style({ stroke: "#536b90", lineWidth: 5, lineJoin: "round" })
           .animate({
             appear: {
@@ -164,10 +274,10 @@ export default class ShapeShiftingHistogram extends VisCompBase {
             },
           });
 
-        view2.annotation().dataMarker({
+        lineView.annotation().dataMarker({
           point: null,
           text: {
-            content: dataText[0],
+            content: originData[0][0].year,
             style: {
               fontSize: 32,
               fontWeight: "bold",
@@ -184,7 +294,7 @@ export default class ShapeShiftingHistogram extends VisCompBase {
               },
             },
           },
-          position: ["80%", "88%"],
+          position: ["23.5%", "32%"],
           line: {
             length: 50,
             style: {
@@ -203,11 +313,10 @@ export default class ShapeShiftingHistogram extends VisCompBase {
           },
         });
 
-        view3.data(data3[count]);
-        view3.tooltip(false);
-        view3
+        maskView.tooltip(false);
+        maskView
           .interval()
-          .position("income*num")
+          .position("income2*num2")
           .style({ fill: "#536b90", fillOpacity: 0.15 })
           .animate({
             appear: {
@@ -216,20 +325,19 @@ export default class ShapeShiftingHistogram extends VisCompBase {
               delay: 500,
               duration: 500,
             },
-            // update: {
-            //     // animation: 'scale-in-x',
-            //     duration: 600,
-            //     easing: 'easeLinear',
-            // }
+            update: {
+              duration: 600,
+              easing: "easeLinear",
+            },
           });
         count++;
         chart.render();
-        timeOut = setTimeout(runGif, 3500); //自定义间隔时间
-      } else if (count < data.length) {
-        view1.annotation().clear(true);
-        view1.annotation().text({
+        timeOut = setTimeout(runGif, 3500);
+      } else if (count < originData.length) {
+        intervalView.annotation().clear(true);
+        intervalView.annotation().text({
           position: ["5%", "13%"],
-          content: dataText[count],
+          content: originData[count][0].year,
           style: {
             fontSize: 48,
             fontWeight: "bold",
@@ -238,19 +346,7 @@ export default class ShapeShiftingHistogram extends VisCompBase {
           },
           animate: false,
         });
-        // failed => redraw
-        // view3.data(data3[count]);
-        // view1.data(data[count++]);
-        // chart.render();
-
-        // failed => overlap
-        // view3.changeData(data3[count]);
-        // view1.changeData(data[count++]);
-
-        // failed => unChange
-        view3.data(data3[count]);
-        view1.changeData(data[count++]);
-
+        chart.changeData(originData[count++]);
         timeOut = setTimeout(runGif, 1500);
       } else {
         clearInterval(timeOut);
