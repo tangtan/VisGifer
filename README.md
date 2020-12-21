@@ -46,18 +46,13 @@ The visualization module is powered by [G2](https://g2.antv.vision/zh/examples/g
 }
 ```
 
-## TODO
+### Dataset
 
-- [*] UI - Extensible JSON console
-- [*] UI - Invisible video recorder
-- [*] JSON - Editable JSON cfg
-- [ ] TEST - Unit
-- [*] DOCs - README
-- [*] FEAT - Output format
-- [ ] FEAT - Multiple rendering
-- [ ] FEAT - Customize events sequence
+TODO
 
-## Build Setup
+## Usage
+
+### Interactive Mode
 
 ```bash
 # install dependencies
@@ -65,13 +60,21 @@ npm install
 
 # serve with hot reload at localhost:8080
 npm run dev
+```
 
-# build for production with minification
-npm run build
+### Command Mode
 
-# build for production and view the bundle analyzer report
-npm run build --report
+```bash
+# install dependencies and build for production with minification
+npm install && npm run build
 
+# generate visualization gifs
+npm gen --config config.json
+```
+
+### Testing
+
+```bash
 # run unit tests
 npm run unit
 
@@ -81,5 +84,3 @@ npm run e2e
 # run all tests
 npm test
 ```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

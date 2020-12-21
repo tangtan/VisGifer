@@ -9,7 +9,7 @@
       @mousedown="changeBtnStyle"
       @click="startRendering"
     >
-      render
+      Click Me
     </div>
     <div id="hidden-bar">
       <textarea
@@ -153,8 +153,12 @@ video {
   position: absolute;
   right: 10px;
   top: 10px;
-  width: 120px;
-  height: 30px;
-  line-height: 30px;
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+  line-height: 80px;
+  color: white;
+  font-weight: bold;
+  background: #3883fa;
 }
 </style>

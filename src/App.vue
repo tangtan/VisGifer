@@ -14,8 +14,8 @@ export default {
 
   components: {
     "json-console": JsonConsole,
-    "vis-renderer": VisRenderer
-  }
+    "vis-renderer": VisRenderer,
+  },
 };
 </script>
 
@@ -33,10 +33,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-
-#btn-play {
-  background: pink;
 }
 
 div.jsoneditor {
