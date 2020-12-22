@@ -12,15 +12,8 @@
       Click Me
     </div>
     <div id="hidden-bar">
-      <textarea
-        id="textarea-json"
-        placeholder="Config JSON - visualization"
-      ></textarea>
-      <textarea id="textarea-upload" placeholder="Upload URL"></textarea>
-      <textarea
-        id="textarea-render"
-        placeholder="Config JSON - video"
-      ></textarea>
+      <textarea id="textarea-json"></textarea>
+      <textarea id="textarea-upload"></textarea>
     </div>
   </div>
 </template>
@@ -39,17 +32,16 @@ export default {
 
   data() {
     return {
+      outputFormat: "mp4",
+      isDownloadZIP: false,
       btnPlayStyle: {
         "box-shadow": "2px 2px 2px #888",
       },
-      vConfigList: [],
-      isDownloadZIP: false,
-      outputFormat: "mp4",
     };
   },
 
   computed: {
-    ...mapGetters(["renderList", "configData"]),
+    ...mapGetters(["renderJson", "configData"]),
   },
 
   methods: {
@@ -74,19 +66,26 @@ export default {
     startRendering: async function () {
       this.restoreBtnStyle();
       const zip = new JSZip();
-      console.log(this.renderList);
-      this.vConfigList = this.renderList.map((json) => transformData(json));
-      for (let [i, vConfig] of this.vConfigList.entries()) {
-        this.$refs.video.src = vConfig.videoSrc;
-        const blobs = await this.playOnCanvas(vConfig);
-        blobs.forEach((blob, j) => {
-          const filename = `${i}-${j}.${this.outputFormat}`;
-          zip.file(filename, blob, { binary: true });
-        });
-      }
+      // Interactive mode or command mode
+      const backendRenderJson = document.getElementById("textarea-json")
+        .innerHTML;
+      const isInteractiveMode = backendRenderJson.length === 0;
+      const vConfig = transformData(
+        isInteractiveMode ? this.renderJson : JSON.parse(backendRenderJson)
+      );
+      // Setup visualization config
+      this.$refs.video.src = vConfig.videoSrc;
+      const blobs = await this.playOnCanvas(vConfig);
+      blobs.forEach((blob, j) => {
+        const filename = `${vConfig.name}.${this.outputFormat}`;
+        zip.file(filename, blob, { binary: true });
+      });
+      // Generate output files
       const zipFile = await zip.generateAsync({ type: "blob" });
-      if (this.isDownloadZIP) {
-        saveFile(zipFile, "img.zip");
+      if (isInteractiveMode) {
+        if (this.isDownloadZIP) {
+          saveFile(zipFile, "img.zip");
+        }
       } else {
         await uploadFile(zipFile, "img.zip");
       }
@@ -94,7 +93,7 @@ export default {
 
     playOnCanvas: async function (vConfig) {
       this.clearG2Container();
-      const FPS = this.configData.fps;
+      const FPS = this.configData.fps || 30;
       return await renderVisComp(
         "g2-container",
         vConfig,

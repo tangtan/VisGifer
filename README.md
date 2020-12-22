@@ -69,7 +69,7 @@ npm run dev
 npm install && npm run build
 
 # generate visualization gifs
-npm gen --config config.json
+npm run render
 ```
 
 ### Testing

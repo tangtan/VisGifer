@@ -27,29 +27,29 @@ export default {
         tl: false,
         tr: false,
         bl: false,
-        br: false
+        br: false,
       },
       resizeBoxMax: {
         width: 600,
-        height: 0
+        height: 0,
       },
       resizeBoxMin: {
         width: 335,
-        height: 0
-      }
+        height: 0,
+      },
     };
   },
 
   computed: {
-    ...mapGetters(["renderList"])
+    ...mapGetters(["renderJson"]),
   },
 
   methods: {
-    ...mapActions(["updateRenderList"])
+    ...mapActions(["updateRenderJson"]),
   },
 
   components: {
-    ResizeBox
+    ResizeBox,
   },
 
   mounted() {
@@ -57,16 +57,16 @@ export default {
       const container = document.getElementById("editor");
       if (container) {
         const options = {
-          onChangeJSON: json => {
-            this.$store.dispatch("updateRenderList", [json]);
-          }
+          onChangeJSON: (json) => {
+            this.$store.dispatch("updateRenderJson", json);
+          },
         };
         this.editor = new JSONEditor(container, options);
         this.$store.dispatch("updateJsonEditor", this.editor);
       }
     }
-    this.editor.set(this.renderList[0]);
-  }
+    this.editor.set(this.renderJson);
+  },
 };
 </script>
 
