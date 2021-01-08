@@ -2,7 +2,7 @@ const express = require("express");
 const { readFile } = require("fs");
 const { promisify } = require("util");
 const path = require("path");
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");  // 'puppeteer-core'
 const multer = require("multer");
 const yargs = require("yargs");
 
@@ -38,8 +38,8 @@ const initFileHostServer = (config) => {
 // Open browser
 const openBrowser = async (config) => {
   return await puppeteer.launch({
-    executablePath: config.browserPath,
-    headless: false, // FIX: Headless模式下无法打开dist网页
+    // executablePath: config.browserPath,
+    headless: true, 
     ignoreHTTPSErrors: false,
     timeout: config.timeout,
     defaultViewport: {

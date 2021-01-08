@@ -16,13 +16,12 @@
   },
   "dependencies": {
     "@antv/g2": "^4.1.1",
-    "@tweenjs/tween.js": "^17.2.0",
     "express": "^4.17.1",
     "jsoneditor": "^5.26.3",
     "jszip": "^3.1.5",
     "multer": "^1.4.2",
     "prettier": "^2.2.1",
-    "puppeteer-core": "^5.5.0",
+    "puppeteer": "^5.5.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "yargs": "^16.2.0"
